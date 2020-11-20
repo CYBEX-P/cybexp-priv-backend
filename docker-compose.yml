@@ -2,7 +2,8 @@ version: "3.8"
 services:
 
   priv-backend-api:
-    image: priv-backend-api
+    # image: priv-backend-api
+    container_name: priv-backend-api
     build: .
     restart: always
     ports:
@@ -20,9 +21,9 @@ services:
       - priv-backend-net
 
     volumes:
-      - "./db:/data/db"
-      - "./configdb:/data/configdb"
-      - "./logs:/var/log/mongodb"
+      - "./db/db:/data/db"
+      - "./db/configdb:/data/configdb"
+      - "./db/logs:/var/log/mongodb"
 
 networks:
   priv-backend-net: {}
