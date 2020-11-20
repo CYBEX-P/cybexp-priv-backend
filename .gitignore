@@ -1,0 +1,4 @@
+secrets/*
+!secrets/keep_this_file
+db/*
+!db/keep_this_file
