@@ -25,7 +25,7 @@ app = Flask(__name__)
 app.add_url_rule('/', methods=['GET'], view_func=views.index)
 
 app.add_url_rule('/add/enc-data', methods=['POST'], view_func=views.add_enc_data)
-app.add_url_rule('/query', methods=['POST'], view_func=views.query)
+app.add_url_rule('/query', methods=['POST'], view_func=views.query_data)
 
 def load_fetch_ore_key():
    global ORE_key_location, kms_url
