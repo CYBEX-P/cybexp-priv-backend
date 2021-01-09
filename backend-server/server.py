@@ -2,6 +2,8 @@
 
 import sys
 sys.path.append("/priv-libs/libs")
+from priv_common import load_yaml_file
+import db_common
 
 
 from pprint import pprint
@@ -10,13 +12,22 @@ import traceback
 # ref: split into files
 #h ttps://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files
 
-DEBUG = True
-ORE_key_location = "/secrets/ORE_key.bin"
-kms_url = "http://192.168.1.101:5002"
-backed_DB_uri = "mongodb://priv-backend-db:27017/"
+conf =load_yaml_file("./config.yaml")
+DEBUG = conf["debug"]
+ORE_key_location = conf["ORE_key_location"]
+kms_url = conf["kms_url"]
+backed_DB_uri = conf["backed_DB_uri"]
+db_name = conf["db_name"]
+col_name = conf["col_name"]
+
+# DEBUG = True
+# ORE_key_location = "/secrets/ORE_key.bin"
+# kms_url = "http://192.168.1.101:5002"
+# backed_DB_uri = "mongodb://priv-backend-db:27017/"
+
+
 
 import views
-import common
 from flask import Flask
 from web_client import get_ore_key
 
@@ -50,6 +61,6 @@ def load_fetch_ore_key():
 
 if __name__ == '__main__':
    load_fetch_ore_key()
-   col = common.get_collection(backed_DB_uri)
-   common.create_index(col,"index")
+   col = db_common.get_collection(backed_DB_uri,db_name=db_name, col_name=col_name)
+   db_common.create_index(col,"index")
    app.run(host="0.0.0.0", port=5000 , debug=DEBUG, use_reloader=DEBUG)

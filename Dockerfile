@@ -9,6 +9,8 @@ RUN mkdir -p /secrets
 
 # copy backend-server last
 COPY ./backend-server /backend-server
+COPY ./config.yaml /backend-server/config.yaml
+
 
 WORKDIR /backend-server
 EXPOSE 5000
