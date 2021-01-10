@@ -20,7 +20,7 @@ from de import RSADOAEP, rsa_key
 from ore_key_gen import gen_ore_key_rand
 from ORE import *
 
-conf =load_yaml_file("./config.yaml")
+conf =load_yaml_file("/config.yaml")
 # ORE_key_location = conf["ORE_key_location"]
 backed_DB_uri = conf["backed_DB_uri"]
 db_name = conf["db_name"]

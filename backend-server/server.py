@@ -12,7 +12,7 @@ import traceback
 # ref: split into files
 #h ttps://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files
 
-conf =load_yaml_file("./config.yaml")
+conf =load_yaml_file("/config.yaml")
 DEBUG = conf["debug"]
 ORE_key_location = conf["ORE_key_location"]
 kms_url = conf["kms_url"]
