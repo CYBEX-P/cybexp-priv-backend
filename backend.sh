@@ -158,10 +158,10 @@ while (( "$#" )); do
 done
 # set positional arguments in their proper place
 eval set -- "$POSITIONAL"
-if [ "$#" -eq 1 ] && [ $BUILD_IT -eq 0 ]; then
+if [ "$#" -eq 1 ] && [ $BUILD_ONLY -eq 0 ]; then
    CONFIG_FILE_P=`realpath $1`
    shift 1
-elif [ $BUILD_IT -eq 0 ];then
+elif [ $BUILD_ONLY -eq 0 ];then
    # echo $#
    # echo $POSITIONAL
    echo "Error: Missing positional arguments." >&2

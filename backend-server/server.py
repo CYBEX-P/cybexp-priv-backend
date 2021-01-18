@@ -9,6 +9,11 @@ import db_common
 from pprint import pprint
 import traceback
 
+
+import views
+from flask import Flask
+from web_client import get_ore_key
+
 # ref: split into files
 #h ttps://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files
 
@@ -26,10 +31,26 @@ col_name = conf["col_name"]
 # backed_DB_uri = "mongodb://priv-backend-db:27017/"
 
 
+basic_auth = None
+try:
+   basic_auth_user = config_collector["basic_auth"]["user"]
+   try:
+      basic_auth_pass = config_collector["basic_auth"]["pass"]
+      basic_auth = (basic_auth_user, basic_auth_pass)
+      print("Baic auth(as client): enabled")
+   except:
+      exit("Baic auth(as client): no password specified. Exiting.\n")
+except:
+   print("Baic auth(as client): disabled")
+   basic_auth = None
 
-import views
-from flask import Flask
-from web_client import get_ore_key
+
+if basic_auth != None:
+   if not test_auth(kms_url, basic_auth):
+      exit("Test failed: KMS basic auth(as client). quiting.")
+
+
+
 
 app = Flask(__name__)
 
@@ -39,14 +60,14 @@ app.add_url_rule('/add/enc-data', methods=['POST'], view_func=views.add_enc_data
 app.add_url_rule('/query', methods=['POST'], view_func=views.query_data)
 
 def load_fetch_ore_key():
-   global ORE_key_location, kms_url
+   global ORE_key_location, kms_url, basic_auth
 
    try:
       k = open(ORE_key_location, "rb").read()
       return
    except FileNotFoundError:
       try:
-         ore_key = get_ore_key(kms_url)
+         ore_key = get_ore_key(kms_url, auth=basic_auth)
          if ore_key == None:
             sys.exit("Could not fetch ORE key from KMS server({})".format(kms_url))
 
