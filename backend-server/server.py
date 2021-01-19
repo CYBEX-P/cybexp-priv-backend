@@ -33,9 +33,9 @@ col_name = conf["col_name"]
 
 basic_auth = None
 try:
-   basic_auth_user = config_collector["basic_auth"]["user"]
+   basic_auth_user = conf["basic_auth"]["user"]
    try:
-      basic_auth_pass = config_collector["basic_auth"]["pass"]
+      basic_auth_pass = conf["basic_auth"]["pass"]
       basic_auth = (basic_auth_user, basic_auth_pass)
       print("Baic auth(as client): enabled")
    except:
