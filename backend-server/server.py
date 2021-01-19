@@ -12,7 +12,7 @@ import traceback
 
 import views
 from flask import Flask
-from web_client import get_ore_key
+from web_client import get_ore_key, test_auth
 
 # ref: split into files
 #h ttps://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files
