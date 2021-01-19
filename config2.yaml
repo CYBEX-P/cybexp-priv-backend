@@ -1,0 +1,34 @@
+
+####################################
+######### Configure these ##########
+####################################
+
+# important to point to kms
+kms_url: "https://cybexp-priv.ignaciochg.com:5002"
+
+# uncomment the following when usgin basic authentication with the server
+basic_auth:
+  user: johndoe
+  pass: AKkmyqnJvR5SsRzNn8eF
+
+####################################
+########## Dev settings ############
+####################################
+
+# web server flask debug mode and other debug ouput
+debug: False
+
+####################################
+##### no need to change below ######
+####################################
+
+# point to db, using db container
+backed_DB_uri: "mongodb://priv-backend-db:27017/"
+
+#backend database
+db_name: priv_backend
+col_name: enc_data
+
+# relative to insise container
+ORE_key_location: "/secrets/ORE_key.bin"
+
