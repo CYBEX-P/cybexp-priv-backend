@@ -3,10 +3,17 @@
 ######### Configure these ##########
 ####################################
 
-# important to point to kms
-kms_url: "http://192.168.1.101:5002"
 
-# uncomment the following when usgin basic authentication with the server
+
+# important to point to kms
+kms_url: "http://127.0.0.1:5002"
+#kms_url: "http://192.168.1.101:5002"
+
+# Use /login endpoint@KMS to get kms_access_key
+# Alternatively use provided login script
+kms_access_key: "kms_access_key" 
+
+# uncomment the following 3 lines when using basic authentication with the KMS server
 # basic_auth:
 #   user: test_user1
 #   pass: ksyhfkjlashlkfjahsfa
@@ -15,7 +22,7 @@ kms_url: "http://192.168.1.101:5002"
 ########## Dev settings ############
 ####################################
 
-# web server flask debug mode and other debug ouput
+# web server flask debug mode and other debug output
 debug: False
 
 ####################################
@@ -29,6 +36,6 @@ backed_DB_uri: "mongodb://priv-backend-db:27017/"
 db_name: priv_backend
 col_name: enc_data
 
-# relative to insise container
-ORE_key_location: "/secrets/ORE_key.bin"
+# # relative to insise container
+# ORE_key_location: "/secrets/ORE_key.bin"
 

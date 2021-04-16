@@ -14,10 +14,10 @@ from flask import render_template
 from flask import Response, request
 from flask import send_file
 
-from cpabew import CPABEAlg
-from cpabe_key_gen import gen_cpabe_master_keys, gen_cpabe_org_secret_key, load_cpabe_org_secret_key_from_name, load_cpabe_master_keys
-from de import RSADOAEP, rsa_key
-from ore_key_gen import gen_ore_key_rand
+# from cpabew import CPABEAlg
+# from cpabe_key_gen import gen_cpabe_master_keys, gen_cpabe_org_secret_key, load_cpabe_org_secret_key_from_name, load_cpabe_master_keys
+# from de import RSADOAEP, rsa_key
+# from ore_key_gen import gen_ore_key_rand
 from ORE import *
 
 conf =load_yaml_file("/config.yaml")
@@ -26,10 +26,7 @@ backed_DB_uri = conf["backed_DB_uri"]
 db_name = conf["db_name"]
 col_name = conf["col_name"]
 DEBUG = conf["debug"]
-
-
-# ORE_key_location = "/secrets/ORE_key.bin"
-# backed_DB_uri = "mongodb://priv-backend-db:27017/"
+# kms_access_key = conf["kms_access_key"]
 
 
 
