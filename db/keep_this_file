@@ -1,0 +1,4 @@
+This file serves two purpuses:
+  - Keeps the folder structure on version control (git)
+  - This folder is a place for this module's instance to place its database (critical)
+

@@ -12,48 +12,26 @@ import traceback
 
 import views
 from flask import Flask
-from web_client import get_ore_key, test_auth
+# from web_client import get_ore_key, test_auth
 
 # ref: split into files
 #h ttps://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files
 
 conf =load_yaml_file("/config.yaml")
+FLASK_DEBUG = conf["debug_mode_flask"]
 DEBUG = conf["debug"]
-# ORE_key_location = conf["ORE_key_location"]
-kms_url = conf["kms_url"]
+
+
 backed_DB_uri = conf["backed_DB_uri"]
 db_name = conf["db_name"]
 col_name = conf["col_name"]
-kms_access_key = conf["kms_access_key"]
 
 
-basic_auth = None
-try:
-   basic_auth_user = conf["basic_auth"]["user"]
-   try:
-      basic_auth_pass = conf["basic_auth"]["pass"]
-      basic_auth = (basic_auth_user, basic_auth_pass)
-      print("Baic auth(as client): enabled")
-   except:
-      exit("Baic auth(as client): no password specified. Exiting.\n")
-except:
-   print("Baic auth(as client): disabled")
-   basic_auth = None
+# # the fillowing code is no longer neede as backend should never get a key
+# ORE_key_location = conf["ORE_key_location"]
+# kms_url = conf["kms_url"]
+# kms_access_key = conf["kms_access_key"]
 
-
-if basic_auth != None:
-   if not test_auth(kms_url, basic_auth):
-      exit("Test failed: KMS basic auth(as client). quiting.")
-
-
-
-
-app = Flask(__name__)
-
-app.add_url_rule('/', methods=['GET'], view_func=views.index)
-
-app.add_url_rule('/add/enc-data', methods=['POST'], view_func=views.add_enc_data)
-app.add_url_rule('/query', methods=['POST'], view_func=views.query_data)
 
 # def load_fetch_ore_key():
 #    global ORE_key_location, kms_url, basic_auth, kms_access_key
@@ -75,11 +53,35 @@ app.add_url_rule('/query', methods=['POST'], view_func=views.query_data)
 #       return 
 #    sys.exit("Could not load or fetch ORE key")
 
+# basic_auth = None
+# try:
+#    basic_auth_user = conf["basic_auth"]["user"]
+#    try:
+#       basic_auth_pass = conf["basic_auth"]["pass"]
+#       basic_auth = (basic_auth_user, basic_auth_pass)
+#       print("Baic auth(as client): enabled")
+#    except:
+#       exit("Baic auth(as client): no password specified. Exiting.\n")
+# except:
+#    print("Baic auth(as client): disabled")
+#    basic_auth = None
 
+
+# if basic_auth != None:
+#    if not test_auth(kms_url, basic_auth):
+#       exit("Test failed: KMS basic auth(as client). quiting.")
+
+
+app = Flask(__name__)
+
+app.add_url_rule('/', methods=['GET'], view_func=views.index)
+
+app.add_url_rule('/add/enc-data', methods=['POST'], view_func=views.add_enc_data)
+app.add_url_rule('/query', methods=['POST'], view_func=views.query_data)
 
 
 if __name__ == '__main__':
    # load_fetch_ore_key()
    col = db_common.get_collection(backed_DB_uri,db_name=db_name, col_name=col_name)
    db_common.create_index(col,"index")
-   app.run(host="0.0.0.0", port=5000 , debug=DEBUG, use_reloader=DEBUG)
+   app.run(host="0.0.0.0", port=5000 , debug=FLASK_DEBUG, use_reloader=FLASK_DEBUG)
