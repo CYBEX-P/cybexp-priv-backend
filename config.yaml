@@ -27,7 +27,7 @@
 # web server flask debug mode and other debug output
 debug_mode_flask: False
 
-# debug mode for the rest of the code
+# debug mode for the rest of the code, more verbose
 debug: False
 
 # Debuging outputs, display encrpyted data. 'debug' flag not required
@@ -50,6 +50,4 @@ backed_DB_uri: "mongodb://priv-backend-db:27017/"
 db_name: priv_backend
 col_name: enc_data
 
-# # relative to insise container
-# ORE_key_location: "/secrets/ORE_key.bin"
 

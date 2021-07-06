@@ -18,7 +18,7 @@ from flask import send_file
 # from cpabe_key_gen import gen_cpabe_master_keys, gen_cpabe_org_secret_key, load_cpabe_org_secret_key_from_name, load_cpabe_master_keys
 # from de import RSADOAEP, rsa_key
 # from ore_key_gen import gen_ore_key_rand
-from ORE import *
+# from ORE import *
 
 conf =load_yaml_file("/config.yaml")
 # ORE_key_location = conf["ORE_key_location"]
@@ -66,32 +66,53 @@ def add_enc_data():
 
 
 
-def _bigger_than(bin_dat, timestamp_bin):
-   left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
-   right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
-   r = left > right
+# def _bigger_than(bin_dat, timestamp_bin):
+#    left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
+#    right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
+#    r = left > right
+#    # print("right:", r,flush=True)
+#    return r
+
+# def _smaller_than(bin_dat, timestamp_bin):
+#    left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
+#    right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
+#    r = left < right
+#    # print("left:", r,flush=True)
+#    return r
+
+
+# def _bigger_eq_than(bin_dat, timestamp_bin):
+#    left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
+#    right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
+#    r = left >= right
+#    # print("left=:", r,flush=True)
+#    return r
+   
+# def _smaller_eq_than(bin_dat, timestamp_bin):
+#    left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
+#    right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
+#    r = left <= right
+#    # print("right=:", r,flush=True)
+#    return r
+
+def _bigger_than(enc_data, timestamp_thresh):
+   r = enc_data > timestamp_thresh
    # print("right:", r,flush=True)
    return r
 
-def _smaller_than(bin_dat, timestamp_bin):
-   left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
-   right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
-   r = left < right
+def _smaller_than(enc_data, timestamp_thresh):
+   r = enc_data < timestamp_thresh
    # print("left:", r,flush=True)
    return r
 
 
-def _bigger_eq_than(bin_dat, timestamp_bin):
-   left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
-   right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
-   r = left >= right
+def _bigger_eq_than(enc_data, timestamp_thresh):
+   r = enc_data >= timestamp_thresh
    # print("left=:", r,flush=True)
    return r
    
-def _smaller_eq_than(bin_dat, timestamp_bin):
-   left = OREComparable(ORECiphertext.from_raw_bytes(bin_dat))
-   right = OREComparable(ORECiphertext.from_raw_bytes(timestamp_bin))
-   r = left <= right
+def _smaller_eq_than(enc_data, timestamp_thresh):
+   r = enc_data <= timestamp_thresh
    # print("right=:", r,flush=True)
    return r
 
