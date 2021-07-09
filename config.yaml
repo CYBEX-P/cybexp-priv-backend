@@ -1,24 +1,10 @@
 
 ####################################
-######### Configure these ##########
+####### Configure behaviour ########
 ####################################
 
 
 
-# important to point to kms
-# kms_url: "http://127.0.0.1:5002"
-# kms_url: "http://192.168.1.101:5002"
-# kms_url: "https://cse.unr.edu:5002"
-
-
-# Use /login endpoint@KMS to get kms_access_key
-# Alternatively use provided login script
-# kms_access_key: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDIzMjM1NSwianRpIjoiODc2YTlmZmQtYWNkNi00MjNjLWJhYmMtZDI5YzRjYjI5YjgxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImJhY2tlbmQiLCJuYmYiOjE2MjAyMzIzNTV9.rHjiHKGOAybgy5nL41QECENiSYY0Hi3WgfubeOTZXkw" 
-
-# uncomment the following 3 lines when using basic authentication with the KMS server
-# basic_auth:
-#   user: test_user1
-#   pass: ksyhfkjlashlkfjahsfa
 
 ####################################
 ########## Dev settings ############
@@ -30,6 +16,9 @@ debug_mode_flask: False
 # debug mode for the rest of the code, more verbose
 debug: False
 
+# print time comparisons (encrypted)
+print_time_comparison: False
+
 # Debuging outputs, display encrpyted data. 'debug' flag not required
 # print data matching query before it is filtered using time (encrypted)
 print_pre_time_filtered_data: False
@@ -38,6 +27,11 @@ print_time_filtered_data: False
 # print response to client (encrpyted)
 print_response: False
 
+
+# return data that matches the query that does not have
+# timestamp when doing timestamp queries
+# also enables similar behaviour but when timestamp comparison fails
+add_missing_data_to_response_on_missing_time: False
 
 ####################################
 ##### no need to change below ######

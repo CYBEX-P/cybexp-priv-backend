@@ -14,6 +14,12 @@ from flask import render_template
 from flask import Response, request
 from flask import send_file
 
+# add 64 bit int support mongo
+# https://www.py4u.net/discuss/221989
+from decimal import Decimal
+from bson.decimal128 import Decimal128
+
+
 # from cpabew import CPABEAlg
 # from cpabe_key_gen import gen_cpabe_master_keys, gen_cpabe_org_secret_key, load_cpabe_org_secret_key_from_name, load_cpabe_master_keys
 # from de import RSADOAEP, rsa_key
@@ -29,6 +35,9 @@ DEBUG = conf["debug"]
 PRINT_PRE_FILTERED = conf["print_pre_time_filtered_data"]
 PRINT_FILTERED = conf["print_time_filtered_data"]
 PRINT_RESPONSE = conf["print_response"]
+PRINT_TIME_COMPARISON = conf["print_time_comparison"]
+
+ADD_DATA_2_RESP_ON_MISSING_TIME = conf["add_missing_data_to_response_on_missing_time"]
 
 # kms_access_key = conf["kms_access_key"]
 
@@ -56,6 +65,18 @@ def add_enc_data():
       indexes = data["index"]
       if type(data) == dict and type(indexes) == list and len(indexes) > 0:
          db = get_collection(backed_DB_uri,db_name=db_name, col_name=col_name)
+         
+         new_timestamps= list()
+         timestamps= data.get("timestamp", None)
+
+         # timestamps are 64 bits, mongo doesnt support 64bit
+         # the following hacks it to do so
+         # https://www.py4u.net/discuss/221989
+         if timestamps:
+            for ts in timestamps:
+               new_timestamps.append(Decimal128(Decimal(ts)))
+            data["timestamp"] = new_timestamps
+
          db.insert_one(data)
          return Response(status=201)
       else:
@@ -96,29 +117,43 @@ def add_enc_data():
 #    return r
 
 def _bigger_than(enc_data, timestamp_thresh):
-   r = enc_data > timestamp_thresh
-   # print("right:", r,flush=True)
+   # cast to inst as its decimal128
+   r = int(enc_data.to_decimal()) > int(timestamp_thresh.to_decimal())
+   if PRINT_TIME_COMPARISON:
+      print(f"{enc_data} > {timestamp_thresh} = {r}",flush=True)
+      # print("right:", r,flush=True)
    return r
 
 def _smaller_than(enc_data, timestamp_thresh):
-   r = enc_data < timestamp_thresh
-   # print("left:", r,flush=True)
+   # cast to inst as its decimal128
+   r = int(enc_data.to_decimal()) < int(timestamp_thresh.to_decimal())
+   if PRINT_TIME_COMPARISON:
+      print(f"{enc_data} < {timestamp_thresh} = {r}",flush=True)
+      # print("left:", r,flush=True)
    return r
 
 
 def _bigger_eq_than(enc_data, timestamp_thresh):
-   r = enc_data >= timestamp_thresh
-   # print("left=:", r,flush=True)
+   # cast to inst as its decimal128
+   r = int(enc_data.to_decimal()) >= int(timestamp_thresh.to_decimal())
+   if PRINT_TIME_COMPARISON:
+      print(f"{enc_data} >= {timestamp_thresh} = {r}",flush=True)
+      # print("left=:", r,flush=True)
    return r
    
 def _smaller_eq_than(enc_data, timestamp_thresh):
-   r = enc_data <= timestamp_thresh
-   # print("right=:", r,flush=True)
+   # cast to inst as its decimal128
+   r = int(enc_data.to_decimal()) <= int(timestamp_thresh.to_decimal())
+   if PRINT_TIME_COMPARISON:
+      print(f"{enc_data} <= {timestamp_thresh} = {r}",flush=True)
+      # print("right=:", r,flush=True)
    return r
 
 
 
 def time_filt_data(data, left_t, right_t, l_in, r_in):
+   global ADD_DATA_2_RESP_ON_MISSING_TIME
+
    if not left_t and not right_t:
       # print("skiping time filtering ...",flush=True)
       return data
@@ -126,14 +161,19 @@ def time_filt_data(data, left_t, right_t, l_in, r_in):
    # print(" Filtering ")
    # print("*"*20,flush=True)
 
+   # pprint(data)
    new_data = list()
    for d in data:
       if "timestamp" not in d:
-         # print("skipping because timestamp missing",flush=True)
-         # print(d.keys(),flush=True)
-         continue
+         if ADD_DATA_2_RESP_ON_MISSING_TIME:
+            new_data.append(d)
+         else:
+            # print("skipping because timestamp missing",flush=True)
+            # print(d.keys(),flush=True)
+            continue
 
-      timestamps = d["timestamp"]
+      timestamps = d["timestamp"] # note: this is an array
+      # print(timestamps,flush=True)
       
       try:
          # filter left
@@ -161,7 +201,8 @@ def time_filt_data(data, left_t, right_t, l_in, r_in):
       except: # no harm done, as it is encrypted, if decryptable user can self filter timestamp
          traceback.print_exc()
          sys.stdout.flush()
-         new_data.append(d)
+         if ADD_DATA_2_RESP_ON_MISSING_TIME:
+            new_data.append(d)
 
    return new_data
 
@@ -189,6 +230,7 @@ def query_data():
          if DEBUG:
             print("query type:", query_type)
             print("index:", index)
+            print("data:",data )
 
          if type(index) != bytes:
             return Response(status=400)
@@ -197,12 +239,14 @@ def query_data():
          slow_count = False
 
          if "time_left" in data:
-            l_time = data["time_left"]
+            # print(data["time_left"],flush=True)
+            l_time = Decimal128(Decimal(data["time_left"]))
             slow_count = True
          else:
             l_time = None
          if "time_right" in data:
-            r_time = data["time_right"]
+            # print(data["time_right"],flush=True)
+            r_time = Decimal128(Decimal(data["time_right"]))
             slow_count = True
          else:
             r_time = None
@@ -234,6 +278,7 @@ def query_data():
             filtered_data = time_filt_data(query_data, l_time, r_time, left_inclusive, right_inclusive)
             
             if PRINT_FILTERED:
+            # if True:
                print("#"*20+" filted data "+"#"*15)
                pprint(filtered_data)
                print("#"*50,flush=True)
@@ -241,6 +286,7 @@ def query_data():
             if query_type == "count":
                resp = {"count": len(filtered_data)}
             else:
+               # TODO conver decimal128 to int in timestamp
                resp = filtered_data
 
          elif query_type == "count" and not slow_count:

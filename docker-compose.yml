@@ -13,7 +13,7 @@ services:
     networks:
       - priv-backend-net
     volumes:
-      - "${CONFIG_FILE}:/config.yaml"
+      - "${CONFIG_FILE}:/config.yaml:ro"
     environment:
       PYTHONUNBUFFERED: 1
 
